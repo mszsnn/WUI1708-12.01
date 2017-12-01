@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="">
+    <label >
+        账户: <input class="user" type="text" name="user">
+    </label><br>
+    <label >
+        密码: <input class="pass" type="password" name="pass">
+    </label>
+    <input type="submit">
+</form>
+</body>
+</html>
+<script>
+    function AJAX(obj) {
+        let url=obj.url;
+        let type=obj.type||"get";
+        let dataType=obj.dataType||"text";
+        let async=obj.async||"true";
+        let data=obj.data||"";
+        let success=obj.success||"";
+
+        if(data instanceof Object){
+            let str="";
+            for(var key in data){
+                str+=key+"="+data[key]+"&";
+                data=str.slice(0,-1);
+            }
+        }
+
+        let ajax=window.XMLHttpRequest?new XMLHttpRequest():new ActiveXObject();
+        if(type=="get"){
+            ajax.open(type,url+"?"+data,async);
+            ajax.send();
+        }else if(type=="post"){
+            ajax.open(type,url,async);
+            ajax.setRequestHeader("content-type","application/x-www-form-urlencoded");
+            ajax.send(data);
+        }
+
+        ajax.onreadystatechange=function () {
+            if(ajax.readyState==4){
+                if(ajax.status==200){
+                    if(dataType=="text"){
+                        if(success){
+                            success(ajax.responseText)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    let submit=document.querySelector("input[type=submit]");
+    let user=document.querySelector(".user");
+    let pass=document.querySelector(".pass");
+    submit.onclick=function (e) {
+        e.preventDefault();
+        AJAX({
+            url:"index.php",
+            type: "post",
+            async: "true",
+            dataType: "text",
+            data: `user=${user.value}&pass=${pass.value}`,
+            success:function (val) {
+                console.log(val)
+            }
+
+        });
+    }
+
+
+</script>
